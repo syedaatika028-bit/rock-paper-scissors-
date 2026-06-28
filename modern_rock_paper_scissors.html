@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Rock Paper Scissors</title>
+    <style>
+        :root {
+            --bg: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            --glass: rgba(255, 255, 255, 0.1);
+        }
+        body { margin: 0; font-family: 'Segoe UI', sans-serif; background: var(--bg); color: white; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .card { background: var(--glass); backdrop-filter: blur(15px); padding: 2rem; border-radius: 25px; text-align: center; width: 90%; max-width: 500px; border: 1px solid rgba(255,255,255,0.2); }
+        .choices { display: flex; justify-content: center; gap: 20px; margin: 2rem 0; }
+        .choice-btn { font-size: 3rem; background: rgba(255,255,255,0.1); border: 2px solid transparent; border-radius: 50%; padding: 20px; cursor: pointer; transition: 0.3s; }
+        .choice-btn:hover { background: rgba(255,255,255,0.2); transform: scale(1.1); }
+        .scoreboard { display: flex; justify-content: space-between; margin-bottom: 20px; }
+        #result { font-size: 1.5rem; margin: 1rem 0; height: 2rem; }
+        button { padding: 10px 20px; border-radius: 10px; border: none; cursor: pointer; background: rgba(255,255,255,0.2); color: white; margin: 5px; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>RPS Arena</h1>
+        <div class="scoreboard">
+            <span>Player: <span id="pScore">0</span></span>
+            <span>Comp: <span id="cScore">0</span></span>
+        </div>
+        <div id="result">Make your move!</div>
+        <div class="choices">
+            <button class="choice-btn" onclick="play('rock')">🪨</button>
+            <button class="choice-btn" onclick="play('paper')">📄</button>
+            <button class="choice-btn" onclick="play('scissors')">✂️</button>
+        </div>
+        <button onclick="reset()">Reset Scores</button>
+    </div>
+
+    <script>
+        let pScore = parseInt(localStorage.getItem('pScore')) || 0;
+        let cScore = parseInt(localStorage.getItem('cScore')) || 0;
+
+        function play(pChoice) {
+            const choices = ['rock', 'paper', 'scissors'];
+            const cChoice = choices[Math.floor(Math.random() * 3)];
+            let result = '';
+
+            if (pChoice === cChoice) { result = "It's a Draw!"; }
+            else if ((pChoice === 'rock' && cChoice === 'scissors') || 
+                     (pChoice === 'paper' && cChoice === 'rock') || 
+                     (pChoice === 'scissors' && cChoice === 'paper')) {
+                result = "You Win!"; pScore++;
+            } else {
+                result = "Computer Wins!"; cScore++;
+            }
+
+            document.getElementById('result').innerText = `You: ${pChoice} | Comp: ${cChoice} - ${result}`;
+            document.getElementById('pScore').innerText = pScore;
+            document.getElementById('cScore').innerText = cScore;
+            localStorage.setItem('pScore', pScore);
+            localStorage.setItem('cScore', cScore);
+        }
+
+        function reset() {
+            pScore = 0; cScore = 0;
+            localStorage.clear();
+            document.getElementById('pScore').innerText = '0';
+            document.getElementById('cScore').innerText = '0';
+            document.getElementById('result').innerText = "Make your move!";
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key.toLowerCase() === 'r') play('rock');
+            if (e.key.toLowerCase() === 'p') play('paper');
+            if (e.key.toLowerCase() === 's') play('scissors');
+        });
+    </script>
+</body>
+</html>
